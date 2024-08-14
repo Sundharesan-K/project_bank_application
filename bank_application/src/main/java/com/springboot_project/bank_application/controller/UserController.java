@@ -2,6 +2,7 @@ package com.springboot_project.bank_application.controller;
 
 import com.springboot_project.bank_application.dto.LoginRequest;
 import com.springboot_project.bank_application.dto.UsersDto;
+import com.springboot_project.bank_application.model.JwtTokenResponse;
 import com.springboot_project.bank_application.service.UsersService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +23,7 @@ public class UserController {
   }
 
   @PostMapping("/login")
-  public String login(@RequestBody LoginRequest loginRequest){
+  public JwtTokenResponse login(@RequestBody LoginRequest loginRequest) {
     return usersService.verifyUser(loginRequest);
   }
 }
