@@ -2,6 +2,7 @@ package com.springboot_project.bank_application.service.impl;
 
 import com.springboot_project.bank_application.dto.LoginRequest;
 import com.springboot_project.bank_application.dto.UsersDto;
+import com.springboot_project.bank_application.model.JwtTokenResponse;
 import com.springboot_project.bank_application.model.Users;
 import com.springboot_project.bank_application.repo.UserRepo;
 import com.springboot_project.bank_application.service.JWTService;
@@ -28,8 +29,8 @@ public class UsersServiceImpl implements UsersService {
   @Override
   public String registerUser(UsersDto usersDto) {
     Users user = userRepo.findByEmailId(usersDto.getUsername());
-    if (Objects.nonNull(user)){
-      throw new FindException(usersDto.getEmailId()+" this id already exists");
+    if (Objects.nonNull(user)) {
+      throw new FindException(usersDto.getEmailId() + " this id already exists");
     }
     Users users = new Users();
     users.setUsername(usersDto.getUsername());
@@ -43,13 +44,16 @@ public class UsersServiceImpl implements UsersService {
   }
 
   @Override
-  public String verifyUser(LoginRequest loginRequest) {
+  public JwtTokenResponse verifyUser(LoginRequest loginRequest) {
     Authentication authentication =
         manager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmailId(),
             loginRequest.getPassword()));
-    if (authentication.isAuthenticated()){
-      return jwtService.generateToken(loginRequest.getEmailId());
+    if (authentication.isAuthenticated()) {
+      return JwtTokenResponse.builder()
+          .token(jwtService.generateToken(loginRequest.getEmailId()))
+          .emailId(loginRequest.getEmailId())
+          .build();
     }
-    return "fail";
+    return null;
   }
 }
