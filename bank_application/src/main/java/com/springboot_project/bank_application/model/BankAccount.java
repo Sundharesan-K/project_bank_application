@@ -21,7 +21,7 @@ public class BankAccount {
   private String accountNo;
 
   @Field("secret_pin")
-  private int secretPinNo;
+  private String secretPinNo;
 
   @Field("bank_name")
   private String bankOfName;
