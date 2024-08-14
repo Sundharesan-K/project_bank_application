@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class JWTService {
 
-  String secretKey = "";
+  private final String secretKey;
 
   public JWTService() {
     try {
@@ -30,6 +30,11 @@ public class JWTService {
     }
   }
 
+//  public JWTService() {
+//    String base64SecretKey = "XDYnBzC7AobbY8DifgOBUV27ZpMDq41dXjBopi4ICQo=";
+//    this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(base64SecretKey));
+//  }
+
   public String generateToken(String username) {
     Map<String, Object> claims = new HashMap<>();
 
@@ -39,7 +44,7 @@ public class JWTService {
         .add(claims)
         .subject(username)
         .issuedAt(new Date(System.currentTimeMillis()))
-        .expiration(new Date(System.currentTimeMillis() + 60 * 60 * 30))
+        .expiration(new Date(System.currentTimeMillis() + 30 * 60 * 1000))
         .and()
         .signWith(getKey())
         .compact();
