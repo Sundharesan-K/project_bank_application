@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface AccountRepo extends MongoRepository<BankAccount, String> {
 
   BankAccount findByAccountHolderName(String accountHolderName);
+
+  BankAccount findByAccountNo(String accountNo);
 }
