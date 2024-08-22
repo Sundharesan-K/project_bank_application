@@ -26,13 +26,8 @@ public class AccountController {
     return accountService.setPinForAccount(accountDto);
   }
 
-  @PostMapping("/deposit")
-  public String depositMoney(@RequestBody AccountDto accountDto) {
-    return accountService.deposit(accountDto);
-  }
-
-  @PostMapping("/withdraw")
-  public String withdrawMoney(@RequestBody AccountDto accountDto) {
-    return accountService.withdraw(accountDto);
+  @PostMapping("/click-option")
+  public Object clickOption(@RequestBody AccountDto accountDto) {
+    return accountService.clickOptions(accountDto);
   }
 }

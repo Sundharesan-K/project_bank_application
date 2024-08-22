@@ -3,8 +3,8 @@ package com.springboot_project.bank_application.dto;
 import lombok.Data;
 
 @Data
-public class LoginRequest {
+public class StatementResponse {
 
-  private String emailId;
-  private String password;
+  private String type;
+  private String message;
 }
