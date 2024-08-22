@@ -8,7 +8,5 @@ public interface AccountService {
 
   String setPinForAccount(AccountDto accountDto);
 
-  String deposit(AccountDto accountDto);
-
-  String withdraw(AccountDto accountDto);
+  Object clickOptions(AccountDto accountDto);
 }
