@@ -1,5 +1,6 @@
 package com.springboot_project.bank_application.model;
 
+import java.time.LocalDateTime;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -13,4 +14,5 @@ public class Statement {
   private String accountNo;
   private String type;
   private String message;
+  private LocalDateTime dateTime;
 }
