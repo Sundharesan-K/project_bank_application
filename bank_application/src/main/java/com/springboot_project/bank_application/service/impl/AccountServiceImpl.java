@@ -110,6 +110,7 @@ public class AccountServiceImpl implements AccountService {
             statement.setType(WITHDRAW.name());
             statement.setMessage("Withdraw money is : " + moneyFormat(null,
                 accountDto.getWithdrawMoney()));
+            statement.setDateTime(LocalDateTime.now());
             statementRepo.save(statement);
             return "Successfully Money withdraw. Current Balance : " + balance;
           }
@@ -124,6 +125,7 @@ public class AccountServiceImpl implements AccountService {
             statement.setType(DEPOSIT.name());
             statement.setMessage(
                 "Deposit money is : " + moneyFormat(null, accountDto.getDepositMoney()));
+            statement.setDateTime(LocalDateTime.now());
             statementRepo.save(statement);
             return "Successfully Money Deposited. Current Balance : " + balance;
           }
@@ -139,6 +141,7 @@ public class AccountServiceImpl implements AccountService {
                 StatementResponse statementResponse = new StatementResponse();
                 statementResponse.setType(statement.getType());
                 statementResponse.setMessage(statement.getMessage());
+                statementResponse.setDateTime(statement.getDateTime());
                 response.add(statementResponse);
               });
               return response;

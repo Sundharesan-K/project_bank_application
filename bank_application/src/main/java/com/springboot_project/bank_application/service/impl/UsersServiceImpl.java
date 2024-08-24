@@ -28,7 +28,7 @@ public class UsersServiceImpl implements UsersService {
 
   @Override
   public String registerUser(UsersDto usersDto) {
-    Users user = userRepo.findByEmailId(usersDto.getUsername());
+    Users user = userRepo.findByEmailId(usersDto.getEmailId());
     if (Objects.nonNull(user)) {
       throw new FindException(usersDto.getEmailId() + " this id already exists");
     }
