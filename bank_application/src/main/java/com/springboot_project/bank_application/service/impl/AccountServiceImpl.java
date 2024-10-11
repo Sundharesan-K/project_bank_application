@@ -48,16 +48,16 @@ public class AccountServiceImpl implements AccountService {
     auth = auth.substring(7);
     String emailId = jwtService.extractUserName(auth);
     if (ObjectUtils.isEmpty(emailId)) {
-      throw new UsernameNotFoundException("Please try again later");
+      throw new UsernameNotFoundException("Authentication failed. Please try again later.");
     }
     Users user = userRepo.findByEmailId(emailId);
     if (ObjectUtils.isEmpty(user)) {
-      throw new UsernameNotFoundException("Please try again later");
+      throw new UsernameNotFoundException("User not found. Please try again later");
     }
     BankAccount bankAccount = accountRepo.findByAccountHolderName(
         user.getUsername() + " " + user.getLastname());
     if (!ObjectUtils.isEmpty(bankAccount) && bankAccount.getAccountStatus().equals(ACTIVE.name())) {
-      throw new ActiveException("Your Account already activated.So kindly verify your account");
+      throw new ActiveException("Your Account is already active. Please verify your account");
     }
     return createBankAccountForUser(user);
   }
@@ -72,7 +72,7 @@ public class AccountServiceImpl implements AccountService {
     bankAccount.setCreateTs(LocalDateTime.now());
     bankAccount.setUpdateTs(LocalDateTime.now());
     accountRepo.save(bankAccount);
-    return "Account created Successfully. Can you please set secret pin";
+    return "Account created Successfully. Please set your secret PIN";
   }
 
   private String generateRandom12DigitNumber() {
@@ -87,9 +87,9 @@ public class AccountServiceImpl implements AccountService {
     if (Objects.nonNull(bankAccount) && Objects.isNull(bankAccount.getSecretPinNo())) {
       bankAccount.setSecretPinNo(encoder.encode(accountDto.getPin()));
       accountRepo.save(bankAccount);
-      return "Pin set Successfully";
+      return "PIN set Successfully";
     } else {
-      throw new BankAccountNotFoundException("Please enter the correct account number");
+      throw new BankAccountNotFoundException("Invalid account number. Please check and try again.");
     }
   }
 
@@ -110,8 +110,9 @@ public class AccountServiceImpl implements AccountService {
             statement.setType(WITHDRAW.name());
             statement.setMessage("Withdraw money is : " + moneyFormat(null,
                 accountDto.getWithdrawMoney()));
+            statement.setDateTime(LocalDateTime.now());
             statementRepo.save(statement);
-            return "Successfully Money withdraw. Current Balance : " + balance;
+            return "Money withdrawn successfully. Current balance: " + balance;
           }
           case DEPOSIT -> {
             BigDecimal amount = MoneyTransactionService.deposit(bankAccount.getBankBalance(),
@@ -124,8 +125,9 @@ public class AccountServiceImpl implements AccountService {
             statement.setType(DEPOSIT.name());
             statement.setMessage(
                 "Deposit money is : " + moneyFormat(null, accountDto.getDepositMoney()));
+            statement.setDateTime(LocalDateTime.now());
             statementRepo.save(statement);
-            return "Successfully Money Deposited. Current Balance : " + balance;
+            return "Money deposited successfully. Current balance: " + balance;
           }
           case BALANCE_ENQUIRY -> {
             String balance = moneyFormat(bankAccount, null);
@@ -139,22 +141,23 @@ public class AccountServiceImpl implements AccountService {
                 StatementResponse statementResponse = new StatementResponse();
                 statementResponse.setType(statement.getType());
                 statementResponse.setMessage(statement.getMessage());
+                statementResponse.setDateTime(statement.getDateTime());
                 response.add(statementResponse);
               });
               return response;
             }else {
-              return "Have no statements";
+              return  "No statements found for this account.";
             }
           }
           default -> {
-            return "Something is wrong, So can you try after some time !!";
+            return "An error occurred. Please try again later.";
           }
         }
       } else {
-        throw new IncorrectPinException("Incorrect Pin !!");
+        throw new IncorrectPinException("Incorrect PIN. Please try again.");
       }
     } else {
-      throw new BankAccountNotFoundException("Please enter the correct account number");
+      throw new BankAccountNotFoundException("Invalid account number. Please check and try again.");
     }
   }
 
