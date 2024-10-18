@@ -8,8 +8,6 @@ import com.springboot_project.bank_application.repo.RefreshTokenRepo;
 import com.springboot_project.bank_application.service.JWTService;
 import com.springboot_project.bank_application.service.RefreshTokenService;
 import java.time.Instant;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -47,6 +45,6 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
   public RefreshToken validateRefreshToken(String token, String email) {
     return refreshTokenRepo.findByTokenAndEmail(token, email)
-        .orElseThrow(()-> new RefreshTokenException("Invalid Refresh token"));
+        .orElseThrow(() -> new RefreshTokenException("Invalid Refresh token"));
   }
 }

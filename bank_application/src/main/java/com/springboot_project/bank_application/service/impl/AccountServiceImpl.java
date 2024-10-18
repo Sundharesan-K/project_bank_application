@@ -1,16 +1,21 @@
 package com.springboot_project.bank_application.service.impl;
 
 import static com.springboot_project.bank_application.model.AccountStatusType.ACTIVE;
+import static com.springboot_project.bank_application.model.AccountType.SAVINGS;
 import static com.springboot_project.bank_application.model.BankOptions.DEPOSIT;
 import static com.springboot_project.bank_application.model.BankOptions.WITHDRAW;
+import static com.springboot_project.bank_application.util.GenerateRandomNumber.generateRandom12DigitNumber;
+import static com.springboot_project.bank_application.util.GenerateRandomNumber.generateTransactionId;
 
+import com.springboot_project.bank_application.dao.BranchRepo;
 import com.springboot_project.bank_application.dto.AccountDto;
 import com.springboot_project.bank_application.dto.StatementResponse;
 import com.springboot_project.bank_application.exception.ActiveException;
-import com.springboot_project.bank_application.exception.BankAccountNotFoundException;
+import com.springboot_project.bank_application.exception.AccountNotFoundException;
 import com.springboot_project.bank_application.exception.IncorrectPinException;
-import com.springboot_project.bank_application.model.BankAccount;
+import com.springboot_project.bank_application.model.Account;
 import com.springboot_project.bank_application.model.BankOptions;
+import com.springboot_project.bank_application.model.Branches;
 import com.springboot_project.bank_application.model.Statement;
 import com.springboot_project.bank_application.model.Users;
 import com.springboot_project.bank_application.repo.AccountRepo;
@@ -26,7 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -42,6 +46,7 @@ public class AccountServiceImpl implements AccountService {
   private final AccountRepo accountRepo;
   private final PasswordEncoder encoder;
   private final StatementRepo statementRepo;
+  private final BranchRepo branchRepo;
 
   @Override
   public String accountCreate(String auth) {
@@ -54,99 +59,90 @@ public class AccountServiceImpl implements AccountService {
     if (ObjectUtils.isEmpty(user)) {
       throw new UsernameNotFoundException("User not found. Please try again later");
     }
-    BankAccount bankAccount = accountRepo.findByAccountHolderName(
+    Account account = accountRepo.findByAccountHolderName(
         user.getUsername() + " " + user.getLastname());
-    if (!ObjectUtils.isEmpty(bankAccount) && bankAccount.getAccountStatus().equals(ACTIVE.name())) {
+    if (!ObjectUtils.isEmpty(account) && account.getStatus().equals(ACTIVE.name())) {
       throw new ActiveException("Your Account is already active. Please verify your account");
     }
-    return createBankAccountForUser(user);
+    return createAccountForUser(user);
   }
 
-  private String createBankAccountForUser(Users user) {
-    BankAccount bankAccount = new BankAccount();
-    bankAccount.setAccountHolderName(user.getUsername() + " " + user.getLastname());
-    bankAccount.setAccountNo(generateRandom12DigitNumber());
-    bankAccount.setBankOfName("INDIAN BANK");
-    bankAccount.setBankBalance(BigDecimal.ZERO);
-    bankAccount.setAccountStatus(ACTIVE.name());
-    bankAccount.setCreateTs(LocalDateTime.now());
-    bankAccount.setUpdateTs(LocalDateTime.now());
-    accountRepo.save(bankAccount);
+  private String createAccountForUser(Users user) {
+    Account account = new Account();
+    account.setAccountHolderName(user.getUsername() + " " + user.getLastname());
+    account.setAccountNo(generateRandom12DigitNumber());
+    Branches branches = branchRepo.findBranch(user.getLocation().getAddress());
+    if (Objects.nonNull(branches)) {
+      account.setBankName(branches.getBankName());
+      account.setLocation(branches.getLocation());
+      account.setBranchId(branches.getBranchId());
+      account.setIfscCode(branches.getIfscCode());
+    }
+    account.setAccountType(SAVINGS.name());
+    account.setBankBalance(BigDecimal.ZERO);
+    account.setStatus(ACTIVE.name());
+    account.setCreatedAt(LocalDateTime.now());
+    account.setUpdatedAt(LocalDateTime.now());
+    accountRepo.save(account);
     return "Account created Successfully. Please set your secret PIN";
-  }
-
-  private String generateRandom12DigitNumber() {
-    Random random = new Random();
-    long number = Math.abs(random.nextLong() % 1000000000000L);
-    return String.format("%012d", number);
   }
 
   @Override
   public String setPinForAccount(AccountDto accountDto) {
-    BankAccount bankAccount = accountRepo.findByAccountNo(accountDto.getAccountNo());
-    if (Objects.nonNull(bankAccount) && Objects.isNull(bankAccount.getSecretPinNo())) {
-      bankAccount.setSecretPinNo(encoder.encode(accountDto.getPin()));
-      accountRepo.save(bankAccount);
+    Account account = accountRepo.findByAccountNo(accountDto.getAccountNo());
+    if (Objects.nonNull(account) && Objects.isNull(account.getSecretPinNo())) {
+      account.setSecretPinNo(encoder.encode(accountDto.getPin()));
+      accountRepo.save(account);
       return "PIN set Successfully";
     } else {
-      throw new BankAccountNotFoundException("Invalid account number. Please check and try again.");
+      throw new AccountNotFoundException("Invalid account number. Please check and try again.");
     }
   }
 
   @Override
   public Object clickOptions(AccountDto accountDto) {
-    BankAccount bankAccount = accountRepo.findByAccountNo(accountDto.getAccountNo());
-    if (Objects.nonNull(bankAccount)) {
-      if (encoder.matches(accountDto.getPin(), bankAccount.getSecretPinNo())) {
+    Account account = accountRepo.findByAccountNo(accountDto.getAccountNo());
+    if (Objects.nonNull(account)) {
+      if (encoder.matches(accountDto.getPin(), account.getSecretPinNo())) {
         switch (BankOptions.valueOf(accountDto.getOption())) {
           case WITHDRAW -> {
-            BigDecimal amount = MoneyTransactionService.withdraw(bankAccount.getBankBalance(),
-                accountDto.getWithdrawMoney());
-            bankAccount.setBankBalance(amount);
-            accountRepo.save(bankAccount);
-            String balance = moneyFormat(bankAccount, null);
-            Statement statement = new Statement();
-            statement.setAccountNo(bankAccount.getAccountNo());
-            statement.setType(WITHDRAW.name());
-            statement.setMessage("Withdraw money is : " + moneyFormat(null,
-                accountDto.getWithdrawMoney()));
-            statement.setDateTime(LocalDateTime.now());
-            statementRepo.save(statement);
+            BigDecimal amount = MoneyTransactionService.withdrawOrTransferMoney(account.getBankBalance(),
+                accountDto.getAmount(), accountDto.getOption());
+            account.setBankBalance(amount);
+            account.setUpdatedAt(LocalDateTime.now());
+            accountRepo.save(account);
+            String balance = moneyFormat(account, null);
+            buildStatement(accountDto, account);
             return "Money withdrawn successfully. Current balance: " + balance;
           }
           case DEPOSIT -> {
-            BigDecimal amount = MoneyTransactionService.deposit(bankAccount.getBankBalance(),
-                accountDto.getDepositMoney());
-            bankAccount.setBankBalance(amount);
-            accountRepo.save(bankAccount);
-            String balance = moneyFormat(bankAccount, null);
-            Statement statement = new Statement();
-            statement.setAccountNo(bankAccount.getAccountNo());
-            statement.setType(DEPOSIT.name());
-            statement.setMessage(
-                "Deposit money is : " + moneyFormat(null, accountDto.getDepositMoney()));
-            statement.setDateTime(LocalDateTime.now());
-            statementRepo.save(statement);
+            BigDecimal amount = MoneyTransactionService.depositOrTransferMoney(account.getBankBalance(),
+                accountDto.getAmount(), accountDto.getOption());
+            account.setBankBalance(amount);
+            account.setUpdatedAt(LocalDateTime.now());
+            accountRepo.save(account);
+            String balance = moneyFormat(account, null);
+            buildStatement(accountDto, account);
             return "Money deposited successfully. Current balance: " + balance;
           }
           case BALANCE_ENQUIRY -> {
-            String balance = moneyFormat(bankAccount, null);
+            String balance = moneyFormat(account, null);
             return "Current Balance : " + balance;
           }
           case STATEMENT -> {
             List<Statement> statements = statementRepo.findByAccountNo(accountDto.getAccountNo());
-            if (!statements.isEmpty()){
+            if (!statements.isEmpty()) {
               List<StatementResponse> response = new ArrayList<>();
               statements.forEach(statement -> {
                 StatementResponse statementResponse = new StatementResponse();
                 statementResponse.setType(statement.getType());
                 statementResponse.setMessage(statement.getMessage());
-                statementResponse.setDateTime(statement.getDateTime());
+                statementResponse.setDateTime(statement.getCreateAt());
                 response.add(statementResponse);
               });
               return response;
-            }else {
-              return  "No statements found for this account.";
+            } else {
+              return "No statements found for this account.";
             }
           }
           default -> {
@@ -157,15 +153,35 @@ public class AccountServiceImpl implements AccountService {
         throw new IncorrectPinException("Incorrect PIN. Please try again.");
       }
     } else {
-      throw new BankAccountNotFoundException("Invalid account number. Please check and try again.");
+      throw new AccountNotFoundException("Invalid account number. Please check and try again.");
     }
   }
 
-  public String moneyFormat(BankAccount bankAccount, BigDecimal money) {
+  private void buildStatement(AccountDto accountDto, Account account) {
+    Statement statement = new Statement();
+    statement.setTransactionId(generateTransactionId());
+    statement.setAccountId(account.getId());
+    statement.setAccountNo(account.getAccountNo());
+    if (accountDto.getOption().equals("WITHDRAW")) {
+      statement.setType(WITHDRAW.name());
+      statement.setMessage("Withdraw money is : " + moneyFormat(null,
+          accountDto.getAmount()));
+    } else {
+      statement.setType(DEPOSIT.name());
+      statement.setMessage("Deposit money is : " + moneyFormat(null,
+          accountDto.getAmount()));
+    }
+    statement.setAmount(accountDto.getAmount().doubleValue());
+    statement.setStatus("COMPLETED");
+    statement.setCreateAt(LocalDateTime.now());
+    statementRepo.save(statement);
+  }
+
+  public String moneyFormat(Account account, BigDecimal money) {
     Locale indianLocale = new Locale("en", "IN");
     NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(indianLocale);
-    if (Objects.nonNull(bankAccount)) {
-      return currencyFormatter.format(bankAccount.getBankBalance());
+    if (Objects.nonNull(account)) {
+      return currencyFormatter.format(account.getBankBalance());
     } else {
       return currencyFormatter.format(money);
     }

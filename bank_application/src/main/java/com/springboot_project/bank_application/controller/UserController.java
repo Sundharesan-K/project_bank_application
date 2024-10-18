@@ -4,7 +4,6 @@ import com.springboot_project.bank_application.dto.APIResponse;
 import com.springboot_project.bank_application.dto.LoginRequest;
 import com.springboot_project.bank_application.dto.RefreshTokenRequest;
 import com.springboot_project.bank_application.dto.UsersDto;
-import com.springboot_project.bank_application.model.AuthenticationResponse;
 import com.springboot_project.bank_application.service.RefreshTokenService;
 import com.springboot_project.bank_application.service.UsersService;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +30,7 @@ public class UserController {
       response.setMessage(usersService.registerUser(usersDto));
       response.setStatus("SUCCESS");
       return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }catch (Exception e){
+    } catch (Exception e) {
       response.setErrorMessage(e.getMessage());
       return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -44,7 +43,7 @@ public class UserController {
       response.setData(usersService.verifyUser(loginRequest));
       response.setStatus(HttpStatus.OK.toString());
       return new ResponseEntity<>(response, HttpStatus.OK);
-    }catch (Exception e) {
+    } catch (Exception e) {
       response.setErrorMessage(e.getMessage());
       response.setStatus(HttpStatus.BAD_REQUEST.name());
       return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
@@ -58,7 +57,7 @@ public class UserController {
       response.setData(refreshTokenService.refreshToken(tokenRequest));
       response.setStatus(HttpStatus.OK.toString());
       return new ResponseEntity<>(response, HttpStatus.OK);
-    }catch (Exception e) {
+    } catch (Exception e) {
       response.setErrorMessage(e.getMessage());
       response.setStatus(HttpStatus.NOT_FOUND.toString());
       return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);

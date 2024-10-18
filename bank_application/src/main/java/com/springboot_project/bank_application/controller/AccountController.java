@@ -19,14 +19,15 @@ public class AccountController {
 
   private final AccountService accountService;
   private static final String SUCCESS = "Success";
+
   @PostMapping("/")
   public ResponseEntity<APIResponse> accountCreate(@RequestHeader("Authorization") String auth) {
     APIResponse response = new APIResponse();
     try {
       response.setMessage(accountService.accountCreate(auth));
       response.setStatus(SUCCESS);
-      return new ResponseEntity<>(response,HttpStatus.OK);
-    }catch (Exception e) {
+      return new ResponseEntity<>(response, HttpStatus.OK);
+    } catch (Exception e) {
       response.setErrorMessage(e.getMessage());
       return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
@@ -38,8 +39,8 @@ public class AccountController {
     try {
       response.setMessage(accountService.setPinForAccount(accountDto));
       response.setStatus(SUCCESS);
-      return new ResponseEntity<>(response,HttpStatus.OK);
-    }catch (Exception e) {
+      return new ResponseEntity<>(response, HttpStatus.OK);
+    } catch (Exception e) {
       response.setErrorMessage(e.getMessage());
       return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
@@ -51,8 +52,8 @@ public class AccountController {
     try {
       response.setData(accountService.clickOptions(accountDto));
       response.setStatus(SUCCESS);
-      return new ResponseEntity<>(response,HttpStatus.OK);
-    }catch (Exception e) {
+      return new ResponseEntity<>(response, HttpStatus.OK);
+    } catch (Exception e) {
       response.setErrorMessage(e.getMessage());
       return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
