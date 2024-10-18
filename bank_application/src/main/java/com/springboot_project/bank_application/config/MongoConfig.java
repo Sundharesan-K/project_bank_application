@@ -2,18 +2,17 @@ package com.springboot_project.bank_application.config;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import java.util.Collections;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
-import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
-import org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper;
-import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
+import org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper;
+import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
+import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
-
-import java.util.Collections;
 
 @Configuration
 public class MongoConfig {
@@ -47,7 +46,8 @@ public class MongoConfig {
   }
 
   @Bean
-  public MongoTemplate mongoTemplate(MongoDatabaseFactory factory, MappingMongoConverter converter) {
+  public MongoTemplate mongoTemplate(MongoDatabaseFactory factory,
+      MappingMongoConverter converter) {
     return new MongoTemplate(factory, converter);
   }
 }

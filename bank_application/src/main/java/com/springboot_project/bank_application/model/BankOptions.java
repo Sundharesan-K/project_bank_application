@@ -4,5 +4,6 @@ public enum BankOptions {
   DEPOSIT,
   WITHDRAW,
   BALANCE_ENQUIRY,
-  STATEMENT
+  STATEMENT,
+  TRANSFER
 }

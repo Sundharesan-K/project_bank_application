@@ -2,6 +2,7 @@ package com.springboot_project.bank_application.service.impl;
 
 import com.springboot_project.bank_application.dto.LoginRequest;
 import com.springboot_project.bank_application.dto.UsersDto;
+import com.springboot_project.bank_application.exception.FieldNotFoundException;
 import com.springboot_project.bank_application.model.AuthenticationResponse;
 import com.springboot_project.bank_application.model.Users;
 import com.springboot_project.bank_application.repo.UserRepo;
@@ -39,13 +40,17 @@ public class UsersServiceImpl implements UsersService {
     if (Objects.nonNull(user)) {
       throw new FindException("User with email ID " + usersDto.getEmailId() + " already exists");
     }
+    if (Objects.isNull(usersDto.getLocation())){
+      throw new FieldNotFoundException("Location is mandatory. Please fill in location");
+    }
     Users users = new Users();
     users.setUsername(usersDto.getUsername());
     users.setLastname(usersDto.getLastname());
     users.setPassword(encoder.encode(usersDto.getPassword()));
     users.setEmailId(usersDto.getEmailId());
-    users.setCreateTs(LocalDateTime.now());
-    users.setUpdateTs(LocalDateTime.now());
+    users.setLocation(usersDto.getLocation());
+    users.setCreatedAt(LocalDateTime.now());
+    users.setUpdatedAt(LocalDateTime.now());
     userRepo.save(users);
     return "User registered successfully with email ID: " + usersDto.getEmailId();
   }

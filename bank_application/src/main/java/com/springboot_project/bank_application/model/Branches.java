@@ -1,28 +1,34 @@
 package com.springboot_project.bank_application.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 @Data
-@Document(collection = "users")
-public class Users {
-
+@Document(collection = "branches")
+public class Branches {
   @Id
   private String id;
 
-  private String username;
+  @Field("bank_name")
+  private String bankName;
 
-  private String lastname;
+  @Field("branch_id")
+  private String branchId;
 
-  @Field("email_id")
-  private String emailId;
-
-  private String password;
+  @Field("branch_name")
+  private String branchName;
 
   private Location location;
+
+  @Field("IFSC_code")
+  private String IfscCode;
+
+  @Field("services_offered")
+  private List<String> servicesOffered;
 
   @Field("created_at")
   private LocalDateTime createdAt;
