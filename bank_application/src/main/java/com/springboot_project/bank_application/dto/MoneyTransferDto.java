@@ -4,11 +4,9 @@ import java.math.BigDecimal;
 import lombok.Data;
 
 @Data
-public class AccountDto {
+public class MoneyTransferDto {
 
-  private String accountHolderName;
-  private String accountNo;
-  private String pin;
-  private String option;
+  private String fromAccountNo;
+  private String toAccountNo;
   private BigDecimal amount;
 }

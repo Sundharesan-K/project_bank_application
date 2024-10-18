@@ -8,8 +8,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 @Data
-@Document(collection = "bank_account")
-public class BankAccount {
+@Document(collection = "accounts")
+public class Account {
 
   @Id
   private String id;
@@ -24,17 +24,28 @@ public class BankAccount {
   private String secretPinNo;
 
   @Field("bank_name")
-  private String bankOfName;
+  private String bankName;
+
+  private Location location;
+
+  @Field("branch_id")
+  private String branchId;
+
+  @Field("IFSC_code")
+  private String IfscCode;
+
+  @Field("account_type")
+  private String accountType;
 
   @Field("bank_balance")
   private BigDecimal bankBalance;
 
-  @Field("account_status")
-  private String accountStatus;
+  @Field("status")
+  private String status;
 
-  @Field("create_ts")
-  private LocalDateTime createTs;
+  @Field("created_at")
+  private LocalDateTime createdAt;
 
-  @Field("update_ts")
-  private LocalDateTime updateTs;
+  @Field("updated_at")
+  private LocalDateTime updatedAt;
 }

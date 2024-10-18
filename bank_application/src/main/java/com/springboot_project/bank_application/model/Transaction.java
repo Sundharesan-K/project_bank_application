@@ -7,26 +7,25 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 @Data
-@Document(collection = "users")
-public class Users {
+@Document(collection = "transactions")
+public class Transaction {
 
   @Id
   private String id;
 
-  private String username;
+  @Field("from_account_no")
+  private String fromAccountNo;
 
-  private String lastname;
+  @Field("to_account_no")
+  private String toAccountNo;
 
-  @Field("email_id")
-  private String emailId;
+  private double amount;
 
-  private String password;
+  @Field("transaction_type")
+  private String transactionType;
 
-  private Location location;
+  private String status;
 
   @Field("created_at")
   private LocalDateTime createdAt;
-
-  @Field("updated_at")
-  private LocalDateTime updatedAt;
 }
