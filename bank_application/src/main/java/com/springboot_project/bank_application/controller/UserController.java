@@ -1,11 +1,17 @@
 package com.springboot_project.bank_application.controller;
 
+import static com.springboot_project.bank_application.constant.Constant.API_USERS;
+import static com.springboot_project.bank_application.constant.Constant.LOGIN;
+import static com.springboot_project.bank_application.constant.Constant.REFRESH_TOKEN;
+import static com.springboot_project.bank_application.constant.Constant.REGISTER;
+
 import com.springboot_project.bank_application.dto.APIResponse;
 import com.springboot_project.bank_application.dto.LoginRequest;
 import com.springboot_project.bank_application.dto.RefreshTokenRequest;
 import com.springboot_project.bank_application.dto.UsersDto;
 import com.springboot_project.bank_application.service.RefreshTokenService;
 import com.springboot_project.bank_application.service.UsersService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,15 +22,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping(API_USERS)
 @RequiredArgsConstructor
 public class UserController {
 
   private final UsersService usersService;
   private final RefreshTokenService refreshTokenService;
 
-  @PostMapping("/register")
-  public ResponseEntity<APIResponse> register(@RequestBody UsersDto usersDto) {
+  @PostMapping(REGISTER)
+  public ResponseEntity<APIResponse> register(@Valid @RequestBody UsersDto usersDto) {
     APIResponse response = new APIResponse();
     try {
       response.setMessage(usersService.registerUser(usersDto));
@@ -36,8 +42,8 @@ public class UserController {
     }
   }
 
-  @PostMapping("/login")
-  public ResponseEntity<APIResponse> login(@RequestBody LoginRequest loginRequest) {
+  @PostMapping(LOGIN)
+  public ResponseEntity<APIResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
     APIResponse response = new APIResponse();
     try {
       response.setData(usersService.verifyUser(loginRequest));
@@ -50,8 +56,8 @@ public class UserController {
     }
   }
 
-  @GetMapping("/refreshToken")
-  public ResponseEntity<APIResponse> refreshToken(@RequestBody RefreshTokenRequest tokenRequest) {
+  @GetMapping(REFRESH_TOKEN)
+  public ResponseEntity<APIResponse> refreshToken(@Valid @RequestBody RefreshTokenRequest tokenRequest) {
     APIResponse response = new APIResponse();
     try {
       response.setData(refreshTokenService.refreshToken(tokenRequest));

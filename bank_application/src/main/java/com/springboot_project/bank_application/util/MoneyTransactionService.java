@@ -1,5 +1,6 @@
 package com.springboot_project.bank_application.util;
 
+import static com.springboot_project.bank_application.constant.Constant.INSUFFICIENT_BALANCE;
 import static com.springboot_project.bank_application.model.BankOptions.DEPOSIT;
 import static com.springboot_project.bank_application.model.BankOptions.WITHDRAW;
 
@@ -28,14 +29,14 @@ public class MoneyTransactionService {
         throw new IllegalArgumentException("Withdrawal amount must be greater than zero");
       }
       if (currentBalance.compareTo(amount) < 0) {
-        throw new IllegalArgumentException("Insufficient balance");
+        throw new IllegalArgumentException(INSUFFICIENT_BALANCE);
       }
     } else {
       if (amount.compareTo(BigDecimal.ZERO) <= 0) {
         throw new IllegalArgumentException("Transfer amount must be greater than zero");
       }
       if (currentBalance.compareTo(amount) < 0) {
-        throw new IllegalArgumentException("Insufficient balance");
+        throw new IllegalArgumentException(INSUFFICIENT_BALANCE);
       }
     }
     return currentBalance.subtract(amount);
