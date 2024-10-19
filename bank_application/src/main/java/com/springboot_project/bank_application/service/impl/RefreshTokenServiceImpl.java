@@ -1,5 +1,7 @@
 package com.springboot_project.bank_application.service.impl;
 
+import static com.springboot_project.bank_application.constant.Constant.INVALID_REFRESH_TOKEN;
+
 import com.springboot_project.bank_application.dto.RefreshTokenRequest;
 import com.springboot_project.bank_application.exception.RefreshTokenException;
 import com.springboot_project.bank_application.model.AuthenticationResponse;
@@ -45,6 +47,6 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
   public RefreshToken validateRefreshToken(String token, String email) {
     return refreshTokenRepo.findByTokenAndEmail(token, email)
-        .orElseThrow(() -> new RefreshTokenException("Invalid Refresh token"));
+        .orElseThrow(() -> new RefreshTokenException(INVALID_REFRESH_TOKEN));
   }
 }

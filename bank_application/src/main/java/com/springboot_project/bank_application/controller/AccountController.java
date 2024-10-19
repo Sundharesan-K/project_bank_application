@@ -1,8 +1,14 @@
 package com.springboot_project.bank_application.controller;
 
+import static com.springboot_project.bank_application.constant.Constant.API_ACCOUNT;
+import static com.springboot_project.bank_application.constant.Constant.CLICK_OPTION;
+import static com.springboot_project.bank_application.constant.Constant.SET_PIN;
+import static com.springboot_project.bank_application.constant.Constant.SUCCESS;
+
 import com.springboot_project.bank_application.dto.APIResponse;
 import com.springboot_project.bank_application.dto.AccountDto;
 import com.springboot_project.bank_application.service.AccountService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,14 +19,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/account")
+@RequestMapping(API_ACCOUNT)
 @RequiredArgsConstructor
 public class AccountController {
 
   private final AccountService accountService;
-  private static final String SUCCESS = "Success";
 
-  @PostMapping("/")
+  @PostMapping()
   public ResponseEntity<APIResponse> accountCreate(@RequestHeader("Authorization") String auth) {
     APIResponse response = new APIResponse();
     try {
@@ -33,8 +38,8 @@ public class AccountController {
     }
   }
 
-  @PostMapping("/set-pin")
-  public ResponseEntity<APIResponse> pinSet(@RequestBody AccountDto accountDto) {
+  @PostMapping(SET_PIN)
+  public ResponseEntity<APIResponse> pinSet(@Valid @RequestBody AccountDto accountDto) {
     APIResponse response = new APIResponse();
     try {
       response.setMessage(accountService.setPinForAccount(accountDto));
@@ -46,7 +51,7 @@ public class AccountController {
     }
   }
 
-  @PostMapping("/click-option")
+  @PostMapping(CLICK_OPTION)
   public ResponseEntity<APIResponse> clickOption(@RequestBody AccountDto accountDto) {
     APIResponse response = new APIResponse();
     try {

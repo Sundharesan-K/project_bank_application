@@ -1,5 +1,8 @@
 package com.springboot_project.bank_application.service.impl;
 
+import static com.springboot_project.bank_application.constant.Constant.COMPLETED;
+import static com.springboot_project.bank_application.constant.Constant.INVALID_ACCOUNT;
+import static com.springboot_project.bank_application.constant.Constant.MONEY_TRANSFER_SUCCESS;
 import static com.springboot_project.bank_application.model.AccountStatusType.ACTIVE;
 import static com.springboot_project.bank_application.model.BankOptions.TRANSFER;
 
@@ -30,7 +33,7 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
     Account toAccount = accountRepo.findByAccountNo(moneyTransferDto.getToAccountNo());
 
     if (Objects.isNull(fromAccount) && Objects.isNull(toAccount)) {
-      throw new AccountNotFoundException("Invalid account number. Please check and try again.");
+      throw new AccountNotFoundException(INVALID_ACCOUNT);
     }
 
     if (!fromAccount.getStatus().equals(ACTIVE.name()) || !toAccount.getStatus()
@@ -52,11 +55,11 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
     transaction.setToAccountNo(moneyTransferDto.getToAccountNo());
     transaction.setAmount(moneyTransferDto.getAmount().doubleValue());
     transaction.setTransactionType(TRANSFER.name());
-    transaction.setStatus("COMPLETED");
+    transaction.setStatus(COMPLETED);
     transaction.setCreatedAt(LocalDateTime.now());
     accountRepo.save(fromAccount);
     accountRepo.save(toAccount);
     transactionRepo.save(transaction);
-    return "Money Transfer Successfully";
+    return MONEY_TRANSFER_SUCCESS;
   }
 }

@@ -1,5 +1,14 @@
 package com.springboot_project.bank_application.model;
 
+import static com.springboot_project.bank_application.dao.BranchRepo.BANK_NAME;
+import static com.springboot_project.bank_application.dao.BranchRepo.BRANCHES;
+import static com.springboot_project.bank_application.dao.BranchRepo.BRANCH_ID;
+import static com.springboot_project.bank_application.dao.BranchRepo.BRANCH_NAME;
+import static com.springboot_project.bank_application.dao.BranchRepo.CREATED_AT;
+import static com.springboot_project.bank_application.dao.BranchRepo.IFSC_CODE;
+import static com.springboot_project.bank_application.dao.BranchRepo.SERVICES_OFFERED;
+import static com.springboot_project.bank_application.dao.BranchRepo.UPDATED_AT;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Data;
@@ -8,31 +17,31 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 @Data
-@Document(collection = "branches")
+@Document(collection = BRANCHES)
 public class Branches {
   @Id
   private String id;
 
-  @Field("bank_name")
+  @Field(BANK_NAME)
   private String bankName;
 
-  @Field("branch_id")
+  @Field(BRANCH_ID)
   private String branchId;
 
-  @Field("branch_name")
+  @Field(BRANCH_NAME)
   private String branchName;
 
   private Location location;
 
-  @Field("IFSC_code")
+  @Field(IFSC_CODE)
   private String IfscCode;
 
-  @Field("services_offered")
+  @Field(SERVICES_OFFERED)
   private List<String> servicesOffered;
 
-  @Field("created_at")
+  @Field(CREATED_AT)
   private LocalDateTime createdAt;
 
-  @Field("updated_at")
+  @Field(UPDATED_AT)
   private LocalDateTime updatedAt;
 }
