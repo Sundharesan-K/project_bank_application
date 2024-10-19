@@ -3,6 +3,7 @@ package com.springboot_project.bank_application.config;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import java.util.Collections;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
@@ -17,14 +18,20 @@ import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 @Configuration
 public class MongoConfig {
 
+  @Value("${mongodb-connection-url}")
+  private String mongodbConnectionUrl;
+
+  @Value("${mongodb-database-name}")
+  private String mongodbDataBaseName;
+
   @Bean
   public MongoClient mongoClient() {
-    return MongoClients.create("mongodb://localhost:27017");
+    return MongoClients.create(mongodbConnectionUrl);
   }
 
   @Bean
   public MongoDatabaseFactory mongoDatabaseFactory(MongoClient mongoClient) {
-    return new SimpleMongoClientDatabaseFactory(mongoClient, "bank_application");
+    return new SimpleMongoClientDatabaseFactory(mongoClient, mongodbDataBaseName);
   }
 
   @Bean

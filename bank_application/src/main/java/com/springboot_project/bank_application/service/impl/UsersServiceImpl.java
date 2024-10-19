@@ -1,5 +1,7 @@
 package com.springboot_project.bank_application.service.impl;
 
+import static com.springboot_project.bank_application.constant.Constant.USER_REGISTER_SUCCESS;
+
 import com.springboot_project.bank_application.dto.LoginRequest;
 import com.springboot_project.bank_application.dto.UsersDto;
 import com.springboot_project.bank_application.exception.FieldNotFoundException;
@@ -40,9 +42,6 @@ public class UsersServiceImpl implements UsersService {
     if (Objects.nonNull(user)) {
       throw new FindException("User with email ID " + usersDto.getEmailId() + " already exists");
     }
-    if (Objects.isNull(usersDto.getLocation())){
-      throw new FieldNotFoundException("Location is mandatory. Please fill in location");
-    }
     Users users = new Users();
     users.setUsername(usersDto.getUsername());
     users.setLastname(usersDto.getLastname());
@@ -52,7 +51,7 @@ public class UsersServiceImpl implements UsersService {
     users.setCreatedAt(LocalDateTime.now());
     users.setUpdatedAt(LocalDateTime.now());
     userRepo.save(users);
-    return "User registered successfully with email ID: " + usersDto.getEmailId();
+    return USER_REGISTER_SUCCESS + usersDto.getEmailId();
   }
 
   @Override
