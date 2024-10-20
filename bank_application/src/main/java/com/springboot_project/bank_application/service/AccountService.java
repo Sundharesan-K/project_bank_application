@@ -9,4 +9,6 @@ public interface AccountService {
   String setPinForAccount(AccountDto accountDto);
 
   Object clickOptions(AccountDto accountDto);
+
+  String updatePin(AccountDto accountDto) throws Exception;
 }

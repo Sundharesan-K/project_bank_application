@@ -4,7 +4,6 @@ import static com.springboot_project.bank_application.constant.Constant.USER_REG
 
 import com.springboot_project.bank_application.dto.LoginRequest;
 import com.springboot_project.bank_application.dto.UsersDto;
-import com.springboot_project.bank_application.exception.FieldNotFoundException;
 import com.springboot_project.bank_application.model.AuthenticationResponse;
 import com.springboot_project.bank_application.model.Users;
 import com.springboot_project.bank_application.repo.UserRepo;

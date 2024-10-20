@@ -1,5 +1,6 @@
-package com.springboot_project.bank_application.dao;
+package com.springboot_project.bank_application.dao.impl;
 
+import com.springboot_project.bank_application.dao.BranchDao;
 import com.springboot_project.bank_application.model.Branches;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class BranchRepo {
+public class BranchDaoImpl implements BranchDao {
 
   public static final String BRANCHES = "branches";
   public static final String BANK_NAME = "bank_name";
@@ -22,6 +23,7 @@ public class BranchRepo {
 
   private final MongoTemplate mongoTemplate;
 
+  @Override
   public Branches findBranch(String address) {
     Query query = new Query();
     query.addCriteria(Criteria.where("location.address").is(address));

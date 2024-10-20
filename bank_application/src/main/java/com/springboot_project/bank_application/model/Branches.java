@@ -1,13 +1,13 @@
 package com.springboot_project.bank_application.model;
 
-import static com.springboot_project.bank_application.dao.BranchRepo.BANK_NAME;
-import static com.springboot_project.bank_application.dao.BranchRepo.BRANCHES;
-import static com.springboot_project.bank_application.dao.BranchRepo.BRANCH_ID;
-import static com.springboot_project.bank_application.dao.BranchRepo.BRANCH_NAME;
-import static com.springboot_project.bank_application.dao.BranchRepo.CREATED_AT;
-import static com.springboot_project.bank_application.dao.BranchRepo.IFSC_CODE;
-import static com.springboot_project.bank_application.dao.BranchRepo.SERVICES_OFFERED;
-import static com.springboot_project.bank_application.dao.BranchRepo.UPDATED_AT;
+import static com.springboot_project.bank_application.dao.impl.BranchDaoImpl.BANK_NAME;
+import static com.springboot_project.bank_application.dao.impl.BranchDaoImpl.BRANCHES;
+import static com.springboot_project.bank_application.dao.impl.BranchDaoImpl.BRANCH_ID;
+import static com.springboot_project.bank_application.dao.impl.BranchDaoImpl.BRANCH_NAME;
+import static com.springboot_project.bank_application.dao.impl.BranchDaoImpl.CREATED_AT;
+import static com.springboot_project.bank_application.dao.impl.BranchDaoImpl.IFSC_CODE;
+import static com.springboot_project.bank_application.dao.impl.BranchDaoImpl.SERVICES_OFFERED;
+import static com.springboot_project.bank_application.dao.impl.BranchDaoImpl.UPDATED_AT;
 
 import java.time.LocalDateTime;
 import java.util.List;

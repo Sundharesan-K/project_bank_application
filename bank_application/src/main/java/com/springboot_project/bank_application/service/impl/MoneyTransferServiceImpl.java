@@ -50,6 +50,13 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
         moneyTransferDto.getAmount(), TRANSFER.name());
     toAccount.setBankBalance(addAmount);
     toAccount.setUpdatedAt(LocalDateTime.now());
+    setTransactionDetails(moneyTransferDto);
+    accountRepo.save(fromAccount);
+    accountRepo.save(toAccount);
+    return MONEY_TRANSFER_SUCCESS;
+  }
+
+  private void setTransactionDetails(MoneyTransferDto moneyTransferDto) {
     Transaction transaction = new Transaction();
     transaction.setFromAccountNo(moneyTransferDto.getFromAccountNo());
     transaction.setToAccountNo(moneyTransferDto.getToAccountNo());
@@ -57,9 +64,6 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
     transaction.setTransactionType(TRANSFER.name());
     transaction.setStatus(COMPLETED);
     transaction.setCreatedAt(LocalDateTime.now());
-    accountRepo.save(fromAccount);
-    accountRepo.save(toAccount);
     transactionRepo.save(transaction);
-    return MONEY_TRANSFER_SUCCESS;
   }
 }
